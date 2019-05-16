@@ -1,22 +1,11 @@
-A library for Dart developers.
+# summercash.dart
 
-Created from templates made available by Stagehand under a BSD-style
-[license](https://github.com/dart-lang/stagehand/blob/master/LICENSE).
+A Dart go-summercash API wrapper.
 
-## Usage
+## Installation
 
-A simple usage example:
+```zsh
+git clone https://github.com/SummerCash/summercash.dart.git # Clone repo
 
-```dart
-import 'package:summercash/summercash.dart';
-
-main() {
-  var awesome = new Awesome();
-}
+pub get # Get dependencies
 ```
-
-## Features and bugs
-
-Please file feature requests and bugs at the [issue tracker][tracker].
-
-[tracker]: http://example.com/issues/replaceme
