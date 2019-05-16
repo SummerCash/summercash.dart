@@ -3,6 +3,6 @@
 /// More dartdocs go here.
 library summercash;
 
-export 'src/summercash_base.dart';
+export 'src/common.dart';
 
 // TODO: Export any libraries intended for clients of this package.
