@@ -70,4 +70,28 @@ class Accounts {
 
     return account; // Return account
   }
+
+  Future<Account> newContractAccount(
+      String contractPath, Uint8List deployer) async {
+    final response = await _client.post(methodEndpoint('NewContractAccount'),
+        body: json.encode({}),
+        headers: {
+          'Content-Type': 'application/json'
+        }); // Make post request, get response
+
+    final jsonDecoded = json.decode(response.body); // Decode JSON
+
+    if (response.body.contains('"code":"internal"')) {
+      // Check for errors
+      throw new APIException(jsonDecoded['msg']); // Throw an API Exception
+    }
+
+    final Account account = new Account(
+        Uint8List.fromList(jsonDecoded["message"][0].toString().codeUnits),
+        Uint8List.fromList(jsonDecoded["message"][1]
+            .toString()
+            .codeUnits)); // Initialize account
+
+    return account; // Return account
+  }
 }
