@@ -70,7 +70,7 @@ class Common {
 
   /// Encode given byte array to hex-formatted, MemPrefix-compliant string.
   Future<String> encodeString(Uint8List b) async {
-    final response = await _client.post(methodEndpoint('Encode'),
+    final response = await _client.post(methodEndpoint('EncodeString'),
         body: json.encode({'input': new Base64Codec().encode(b)}),
         headers: {
           'Content-Type': 'application/json'
@@ -84,5 +84,48 @@ class Common {
     }
 
     return jsonDecoded['message'].toString().replaceAll('\n', ''); // Remove \n
+  }
+
+  /// Decode given hex-formatted byte array to standard byte array.
+  Future<Uint8List> decode(Uint8List b) async {
+    final response = await _client.post(methodEndpoint('Decode'),
+        body: json.encode({'input': new Base64Codec().encode(b)}),
+        headers: {
+          'Content-Type': 'application/json'
+        }); // Make post request, get response
+
+    final jsonDecoded = json.decode(response.body); // Decode JSON
+
+    if (response.body.contains('"code":"internal"')) {
+      // Check for errors
+      throw new APIException(jsonDecoded['msg']); // Throw an API Exception
+    }
+
+    final stringEncoded =
+        jsonDecoded['message'].toString().replaceAll('\n', ''); // Remove \n
+
+    return new Uint8List.fromList(
+        stringEncoded.codeUnits); // Encode to byte array
+  }
+
+  Future<Uint8List> decodeString(String s) async {
+    final response = await _client.post(methodEndpoint('DecodeString'),
+        body: json.encode({'s': s}),
+        headers: {
+          'Content-Type': 'application/json'
+        }); // Make post request, get response
+
+    final jsonDecoded = json.decode(response.body); // Decode JSON
+
+    if (response.body.contains('"code":"internal"')) {
+      // Check for errors
+      throw new APIException(jsonDecoded['msg']); // Throw an API Exception
+    }
+
+    final stringEncoded =
+        jsonDecoded['message'].toString().replaceAll('\n', ''); // Remove \n
+
+    return new Uint8List.fromList(
+        stringEncoded.codeUnits); // Encode to byte array
   }
 }
