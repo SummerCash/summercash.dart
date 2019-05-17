@@ -117,8 +117,10 @@ class Accounts {
 
   /// Parse a SummerCash account from a given private key.
   Future<Account> accountFromKey(Uint8List key) async {
+    final encodedKey = '0x' + hex.encode(key); // Encode key to hex
+
     final response = await _client.post(methodEndpoint('AccountFromKey'),
-        body: json.encode({'privateKey': hex.encode(key)}),
+        body: json.encode({'privateKey': encodedKey}),
         headers: {
           'Content-Type': 'application/json'
         }); // Make post request, get response
@@ -132,7 +134,8 @@ class Accounts {
     }
 
     final Account account = new Account(
-        Uint8List.fromList(hex.decode(jsonDecoded['message'].toString())),
+        Uint8List.fromList(
+            hex.decode(jsonDecoded['message'].toString().split('0x')[1])),
         key); // Initialize account
 
     return account; // Return account

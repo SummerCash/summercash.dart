@@ -52,6 +52,16 @@ void main() {
 
       await accounts.newContractAccount(
           'examples/fib.wasm', deployer.address); // Test encode functionality
+    });
+
+    test('should decode an account from a given private key', () async {
+      final account = await accounts.newAccount(); // Initialize account
+
+      final decoded = await accounts
+          .accountFromKey(account.privateKey); // Decode account private key
+
+      expect(decoded.string(),
+          equals(account.string())); // Ensure accounts are equivalent
 
       accounts.destroy(); // Destroy accounts
     });
