@@ -1,7 +1,5 @@
 import 'dart:typed_data';
 import 'package:summercash/src/api_exception.dart';
-import 'package:tuple/tuple.dart';
-import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 import 'dart:io';
 import 'dart:convert';
