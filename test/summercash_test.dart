@@ -71,6 +71,20 @@ void main() {
       final localAccounts = await accounts.getAllAccounts(); // Get all accounts
 
       expect(localAccounts.length, greaterThan(0)); // Ensure has accounts
+    });
+
+    test('should get a list of working contracts', () async {
+      final deployer = await accounts.newAccount(); // Create deploying account
+
+      await accounts.newContractAccount(
+          'examples/fib.wasm', deployer.address); // Initialize contract account
+      await accounts.newContractAccount('examples/main.wasm',
+          deployer.address); // Initialize contract account
+
+      final localContracts =
+          await accounts.getAllContracts(deployer.address); // Get all contracts
+
+      expect(localContracts.length, greaterThan(0)); // Ensure has accounts
 
       accounts.destroy(); // Destroy accounts
     });

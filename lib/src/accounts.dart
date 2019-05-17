@@ -141,6 +141,7 @@ class Accounts {
     return account; // Return account
   }
 
+  /// Walk keystore directory.
   Future<List<Account>> getAllAccounts() async {
     final response = await _client.post(methodEndpoint('GetAllAccounts'),
         body: json.encode({}),
@@ -164,7 +165,37 @@ class Accounts {
 
     addresses.forEach((address) => accounts.add(new Account(
             Uint8List.fromList(hex.decode(address.split('0x')[1])),
-            null)) // Append account to list of accounts
+            null)) // Append account to list of accounts TODO: Request account privat key
+        );
+
+    return accounts; // Return accounts
+  }
+
+  /// Walk keystore directory contracts.
+  Future<List<Account>> getAllContracts(Uint8List deployingAddress) async {
+    final response = await _client.post(methodEndpoint('GetAllContracts'),
+        body: json.encode({'address': '0x' + hex.encode(deployingAddress)}),
+        headers: {
+          'Content-Type': 'application/json'
+        }); // Make post request, get response
+
+    final jsonDecoded =
+        json.decode(response.body.replaceAll('\n', '')); // Decode JSON
+
+    if (response.body.contains('"code":"internal"')) {
+      // Check for errors
+      throw new APIException(jsonDecoded['msg']); // Throw an API Exception
+    }
+
+    List<Account> accounts = new List<Account>(); // Declare account buffer
+
+    final addresses = jsonDecoded['message']
+        .toString()
+        .split(', '); // Split into string addresses
+
+    addresses.forEach((address) => accounts.add(new Account(
+            Uint8List.fromList(hex.decode(address.split('0x')[1])),
+            null)) // Append account to list of accounts TODO: Request account privat key
         );
 
     return accounts; // Return accounts
