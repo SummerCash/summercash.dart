@@ -1,8 +1,4 @@
-/// Support for doing something awesome.
-///
-/// More dartdocs go here.
+/// A dart wrapper for the go-summercash node API.
 library summercash;
 
-export 'src/common.dart';
-
-// TODO: Export any libraries intended for clients of this package.
+export 'src/common.dart'; // The common wrapper.
