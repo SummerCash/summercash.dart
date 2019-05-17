@@ -67,4 +67,22 @@ class Common {
     return new Uint8List.fromList(
         stringEncoded.codeUnits); // Encode to byte array
   }
+
+  /// Encode given byte array to hex-formatted, MemPrefix-compliant string.
+  Future<String> encodeString(Uint8List b) async {
+    final response = await _client.post(methodEndpoint('Encode'),
+        body: json.encode({'input': new Base64Codec().encode(b)}),
+        headers: {
+          'Content-Type': 'application/json'
+        }); // Make post request, get response
+
+    final jsonDecoded = json.decode(response.body); // Decode JSON
+
+    if (response.body.contains('"code":"internal"')) {
+      // Check for errors
+      throw new APIException(jsonDecoded['msg']); // Throw an API Exception
+    }
+
+    return jsonDecoded['message'].toString().replaceAll('\n', ''); // Remove \n
+  }
 }

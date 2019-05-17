@@ -14,5 +14,14 @@ void main() {
           equals(new Uint8List.fromList(
               '0x74657374'.codeUnits))); // Test encode functionality
     });
+
+    test('encoded string test value should match runtime-calculated value',
+        () async {
+      expect(
+          await common.encodeString(new Uint8List.fromList('test'.codeUnits)),
+          equals('0x74657374')); // Test encode functionality
+
+      common.destroy(); // Destroy common
+    });
   });
 }
