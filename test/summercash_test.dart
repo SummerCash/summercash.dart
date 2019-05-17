@@ -44,7 +44,9 @@ void main() {
         new Accounts('https://localhost:8080'); // Initialize accounts API
 
     test('should create a new account', () async {
-      await accounts.newAccount(); // Test encode functionality
+      var account = await accounts.newAccount(); // Test encode functionality
+
+      print(account.string());
 
       accounts.destroy(); // Destroy accounts
     });

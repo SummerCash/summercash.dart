@@ -55,7 +55,10 @@ class Accounts {
           'Content-Type': 'application/json'
         }); // Make post request, get response
 
-    final jsonDecoded = json.decode(response.body); // Decode JSON
+    final jsonDecoded =
+        json.decode(response.body.replaceAll('\n', '')); // Decode JSON
+
+    print(jsonDecoded['message'].toString().split('Address: ')[1]);
 
     if (response.body.contains('"code":"internal"')) {
       // Check for errors
@@ -63,23 +66,31 @@ class Accounts {
     }
 
     final Account account = new Account(
-        Uint8List.fromList(jsonDecoded["message"][0].toString().codeUnits),
-        Uint8List.fromList(jsonDecoded["message"][1]
+        Uint8List.fromList(jsonDecoded['message']
+            .toString()
+            .split('Address: ')[1]
+            .split(',')[0]
+            .codeUnits),
+        Uint8List.fromList(jsonDecoded['message']
+            .toString()
+            .split(', ')[1]
             .toString()
             .codeUnits)); // Initialize account
 
     return account; // Return account
   }
 
+  /// Initialize a new contract account.
   Future<Account> newContractAccount(
       String contractPath, Uint8List deployer) async {
     final response = await _client.post(methodEndpoint('NewContractAccount'),
-        body: json.encode({}),
+        body: json.encode({'address': contractPath, 'privateKey': deployer}),
         headers: {
           'Content-Type': 'application/json'
         }); // Make post request, get response
 
-    final jsonDecoded = json.decode(response.body); // Decode JSON
+    final jsonDecoded =
+        json.decode(response.body.replaceAll('\n', '')); // Decode JSON
 
     if (response.body.contains('"code":"internal"')) {
       // Check for errors
@@ -87,10 +98,39 @@ class Accounts {
     }
 
     final Account account = new Account(
-        Uint8List.fromList(jsonDecoded["message"][0].toString().codeUnits),
-        Uint8List.fromList(jsonDecoded["message"][1]
+        Uint8List.fromList(jsonDecoded['message']
+            .toString()
+            .split('Address: ')[1]
+            .split(',')[0]
+            .codeUnits),
+        Uint8List.fromList(jsonDecoded['message']
+            .toString()
+            .split(', ')[1]
             .toString()
             .codeUnits)); // Initialize account
+
+    return account; // Return account
+  }
+
+  /// Parse a SummerCash account from a given private key.
+  Future<Account> accountFromKey(Uint8List key) async {
+    final response = await _client.post(methodEndpoint('AccountFromKey'),
+        body: json.encode({'privateKey': new String.fromCharCodes(key)}),
+        headers: {
+          'Content-Type': 'application/json'
+        }); // Make post request, get response
+
+    final jsonDecoded =
+        json.decode(response.body.replaceAll('\n', '')); // Decode JSON
+
+    if (response.body.contains('"code":"internal"')) {
+      // Check for errors
+      throw new APIException(jsonDecoded['msg']); // Throw an API Exception
+    }
+
+    final Account account = new Account(
+        Uint8List.fromList(jsonDecoded['message'].toString().codeUnits),
+        key); // Initialize account
 
     return account; // Return account
   }
