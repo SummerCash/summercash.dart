@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:test/test.dart';
 import 'package:summercash/src/common.dart';
+import 'package:summercash/src/accounts.dart';
 
 void main() {
   group('common tests', () {
@@ -35,6 +36,17 @@ void main() {
               [116, 101, 115, 116]))); // Test encode functionality
 
       common.destroy(); // Destroy common
+    });
+  });
+
+  group('account tests', () {
+    Accounts accounts =
+        new Accounts('https://localhost:8080'); // Initialize accounts API
+
+    test('should create a new account', () async {
+      await accounts.newAccount(); // Test encode functionality
+
+      accounts.destroy(); // Destroy accounts
     });
   });
 }

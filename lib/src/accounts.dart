@@ -1,7 +1,13 @@
+import 'dart:typed_data';
 import 'dart:io';
 import 'package:http/io_client.dart';
+import 'package:summercash/src/account.dart';
+import 'package:summercash/src/api_exception.dart';
+import 'dart:convert';
 
-/// API abstractions for the accounts package.
+import 'package:summercash/summercash.dart';
+
+/// API abstractions for the accoqnts package.
 class Accounts {
   /// Base node http API endpoint (does not include package in path).
   String _baseEndpoint;
@@ -39,5 +45,29 @@ class Accounts {
   String methodEndpoint(String method) {
     return _endpoint +
         '/${method[0].toUpperCase()}${method.substring(1)}'; // Return method endpoint
+  }
+
+  /// Initialize a new account.
+  Future<Account> newAccount() async {
+    final response = await _client.post(methodEndpoint('NewAccount'),
+        body: json.encode({}),
+        headers: {
+          'Content-Type': 'application/json'
+        }); // Make post request, get response
+
+    final jsonDecoded = json.decode(response.body); // Decode JSON
+
+    if (response.body.contains('"code":"internal"')) {
+      // Check for errors
+      throw new APIException(jsonDecoded['msg']); // Throw an API Exception
+    }
+
+    final Account account = new Account(
+        Uint8List.fromList(jsonDecoded["message"][0].toString().codeUnits),
+        Uint8List.fromList(jsonDecoded["message"][1]
+            .toString()
+            .codeUnits)); // Initialize account
+
+    return account; // Return account
   }
 }
