@@ -140,4 +140,33 @@ class Accounts {
 
     return account; // Return account
   }
+
+  Future<List<Account>> getAllAccounts() async {
+    final response = await _client.post(methodEndpoint('GetAllAccounts'),
+        body: json.encode({}),
+        headers: {
+          'Content-Type': 'application/json'
+        }); // Make post request, get response
+
+    final jsonDecoded =
+        json.decode(response.body.replaceAll('\n', '')); // Decode JSON
+
+    if (response.body.contains('"code":"internal"')) {
+      // Check for errors
+      throw new APIException(jsonDecoded['msg']); // Throw an API Exception
+    }
+
+    List<Account> accounts = new List<Account>(); // Declare account buffer
+
+    final addresses = jsonDecoded['message']
+        .toString()
+        .split(', '); // Split into string addresses
+
+    addresses.forEach((address) => accounts.add(new Account(
+            Uint8List.fromList(hex.decode(address.split('0x')[1])),
+            null)) // Append account to list of accounts
+        );
+
+    return accounts; // Return accounts
+  }
 }

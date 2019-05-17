@@ -62,6 +62,15 @@ void main() {
 
       expect(decoded.string(),
           equals(account.string())); // Ensure accounts are equivalent
+    });
+
+    test('should get a list of working accounts', () async {
+      await accounts
+          .newAccount(); // Initialize account just to make sure getAllAccounts() isn't nil
+
+      final localAccounts = await accounts.getAllAccounts(); // Get all accounts
+
+      expect(localAccounts.length, greaterThan(0)); // Ensure has accounts
 
       accounts.destroy(); // Destroy accounts
     });
