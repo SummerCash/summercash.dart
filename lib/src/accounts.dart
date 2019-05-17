@@ -4,6 +4,7 @@ import 'package:http/io_client.dart';
 import 'package:summercash/src/account.dart';
 import 'package:summercash/src/api_exception.dart';
 import 'dart:convert';
+import 'package:convert/convert.dart';
 
 import 'package:summercash/summercash.dart';
 
@@ -58,24 +59,22 @@ class Accounts {
     final jsonDecoded =
         json.decode(response.body.replaceAll('\n', '')); // Decode JSON
 
-    print(jsonDecoded['message'].toString().split('Address: ')[1]);
-
     if (response.body.contains('"code":"internal"')) {
       // Check for errors
       throw new APIException(jsonDecoded['msg']); // Throw an API Exception
     }
 
     final Account account = new Account(
-        Uint8List.fromList(jsonDecoded['message']
+        Uint8List.fromList(hex.decode(jsonDecoded['message']
             .toString()
             .split('Address: ')[1]
             .split(',')[0]
-            .codeUnits),
-        Uint8List.fromList(jsonDecoded['message']
+            .split('0x')[1])),
+        Uint8List.fromList(hex.decode(jsonDecoded['message']
             .toString()
             .split(', ')[1]
-            .toString()
-            .codeUnits)); // Initialize account
+            .split('0x')[1]
+            .toString()))); // Initialize account
 
     return account; // Return account
   }
@@ -84,7 +83,10 @@ class Accounts {
   Future<Account> newContractAccount(
       String contractPath, Uint8List deployer) async {
     final response = await _client.post(methodEndpoint('NewContractAccount'),
-        body: json.encode({'address': contractPath, 'privateKey': deployer}),
+        body: json.encode({
+          'address': contractPath,
+          'privateKey': '0x' + hex.encode(deployer)
+        }),
         headers: {
           'Content-Type': 'application/json'
         }); // Make post request, get response
@@ -94,20 +96,21 @@ class Accounts {
 
     if (response.body.contains('"code":"internal"')) {
       // Check for errors
+      print(jsonDecoded['msg']);
       throw new APIException(jsonDecoded['msg']); // Throw an API Exception
     }
 
     final Account account = new Account(
-        Uint8List.fromList(jsonDecoded['message']
+        Uint8List.fromList(hex.decode(jsonDecoded['message']
             .toString()
             .split('Address: ')[1]
             .split(',')[0]
-            .codeUnits),
-        Uint8List.fromList(jsonDecoded['message']
+            .split('0x')[1])),
+        Uint8List.fromList(hex.decode(jsonDecoded['message']
             .toString()
             .split(', ')[1]
-            .toString()
-            .codeUnits)); // Initialize account
+            .split('0x')[1]
+            .toString()))); // Initialize account
 
     return account; // Return account
   }
@@ -115,7 +118,7 @@ class Accounts {
   /// Parse a SummerCash account from a given private key.
   Future<Account> accountFromKey(Uint8List key) async {
     final response = await _client.post(methodEndpoint('AccountFromKey'),
-        body: json.encode({'privateKey': new String.fromCharCodes(key)}),
+        body: json.encode({'privateKey': hex.encode(key)}),
         headers: {
           'Content-Type': 'application/json'
         }); // Make post request, get response
@@ -129,7 +132,7 @@ class Accounts {
     }
 
     final Account account = new Account(
-        Uint8List.fromList(jsonDecoded['message'].toString().codeUnits),
+        Uint8List.fromList(hex.decode(jsonDecoded['message'].toString())),
         key); // Initialize account
 
     return account; // Return account

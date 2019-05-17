@@ -44,9 +44,14 @@ void main() {
         new Accounts('https://localhost:8080'); // Initialize accounts API
 
     test('should create a new account', () async {
-      var account = await accounts.newAccount(); // Test encode functionality
+      await accounts.newAccount(); // Test encode functionality
+    });
 
-      print(account.string());
+    test('should create a new contract account', () async {
+      final deployer = await accounts.newAccount(); // Create deploying account
+
+      await accounts.newContractAccount(
+          'examples/fib.wasm', deployer.address); // Test encode functionality
 
       accounts.destroy(); // Destroy accounts
     });

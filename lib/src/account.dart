@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'dart:convert';
+import 'package:convert/convert.dart';
 
 /// Abstractions for the standard accounts API response mapping.
 class Account {
@@ -22,13 +23,12 @@ class Account {
 
   /// Get address hex value.
   String addressHex() {
-    return new String.fromCharCodes(_address); // Return address string value
+    return '0x' + hex.encode(_address); // Return address string value
   }
 
   /// Get private key hex value.
   String privateKeyHex() {
-    return new String.fromCharCodes(
-        _privateKey); // Return privateKey string value
+    return '0x' + hex.encode(_privateKey); // Return privateKey string value
   }
 
   /// Get account string representation.
