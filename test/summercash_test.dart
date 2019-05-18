@@ -85,6 +85,16 @@ void main() {
           await accounts.getAllContracts(deployer.address); // Get all contracts
 
       expect(localContracts.length, greaterThan(0)); // Ensure has accounts
+    });
+
+    test('should read an account from persistent memory', () async {
+      final account = await accounts.newAccount(); // Initialize account
+
+      final readAccount = await accounts.readAccountFromMemory(
+          account.address); // Read account from persistent memory
+
+      expect(account.string(),
+          equals(readAccount.string())); // Ensure accounts are equivalent
 
       accounts.destroy(); // Destroy accounts
     });

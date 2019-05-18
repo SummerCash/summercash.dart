@@ -57,7 +57,7 @@ class Accounts {
         }); // Make post request, get response
 
     final jsonDecoded =
-        json.decode(response.body.replaceAll('\n', '')); // Decode JSON
+        json.decode(response.body.replaceFirst('\n', '')); // Decode JSON
 
     if (response.body.contains('"code":"internal"')) {
       // Check for errors
@@ -92,7 +92,7 @@ class Accounts {
         }); // Make post request, get response
 
     final jsonDecoded =
-        json.decode(response.body.replaceAll('\n', '')); // Decode JSON
+        json.decode(response.body.replaceFirst('\n', '')); // Decode JSON
 
     if (response.body.contains('"code":"internal"')) {
       // Check for errors
@@ -126,7 +126,7 @@ class Accounts {
         }); // Make post request, get response
 
     final jsonDecoded =
-        json.decode(response.body.replaceAll('\n', '')); // Decode JSON
+        json.decode(response.body.replaceFirst('\n', '')); // Decode JSON
 
     if (response.body.contains('"code":"internal"')) {
       // Check for errors
@@ -150,7 +150,7 @@ class Accounts {
         }); // Make post request, get response
 
     final jsonDecoded =
-        json.decode(response.body.replaceAll('\n', '')); // Decode JSON
+        json.decode(response.body.replaceFirst('\n', '')); // Decode JSON
 
     if (response.body.contains('"code":"internal"')) {
       // Check for errors
@@ -163,10 +163,11 @@ class Accounts {
         .toString()
         .split(', '); // Split into string addresses
 
-    addresses.forEach((address) => accounts.add(new Account(
-            Uint8List.fromList(hex.decode(address.split('0x')[1])),
-            null)) // Append account to list of accounts TODO: Request account privat key
-        );
+    for (String address in addresses) {
+      // Iterate through addresses
+      accounts.add(await readAccountFromMemory(Uint8List.fromList(hex.decode(
+          address.split('0x')[1])))); // Append account to list of accounts
+    }
 
     return accounts; // Return accounts
   }
@@ -180,7 +181,7 @@ class Accounts {
         }); // Make post request, get response
 
     final jsonDecoded =
-        json.decode(response.body.replaceAll('\n', '')); // Decode JSON
+        json.decode(response.body.replaceFirst('\n', '')); // Decode JSON
 
     if (response.body.contains('"code":"internal"')) {
       // Check for errors
@@ -191,13 +192,47 @@ class Accounts {
 
     final addresses = jsonDecoded['message']
         .toString()
+        .replaceFirst('\n', '')
         .split(', '); // Split into string addresses
 
-    addresses.forEach((address) => accounts.add(new Account(
-            Uint8List.fromList(hex.decode(address.split('0x')[1])),
-            null)) // Append account to list of accounts TODO: Request account privat key
-        );
+    for (String address in addresses) {
+      // Iterate through addresses
+      print(address);
+      accounts.add(await readAccountFromMemory(Uint8List.fromList(hex.decode(
+          address.split('0x')[1])))); // Append account to list of accounts
+    }
 
     return accounts; // Return accounts
+  }
+
+  /// Read account from persistent memory.
+  Future<Account> readAccountFromMemory(Uint8List address) async {
+    final response = await _client.post(methodEndpoint('ReadAccountFromMemory'),
+        body: json.encode({'address': '0x' + hex.encode(address)}),
+        headers: {
+          'Content-Type': 'application/json'
+        }); // Make post request, get response
+
+    final jsonDecoded =
+        json.decode(response.body.replaceFirst('\n', '')); // Decode JSON
+
+    if (response.body.contains('"code":"internal"')) {
+      // Check for errors
+      throw new APIException(jsonDecoded['msg']); // Throw an API Exception
+    }
+
+    final Account account = new Account(
+        Uint8List.fromList(hex.decode(jsonDecoded['message']
+            .toString()
+            .split('Address: ')[1]
+            .split(',')[0]
+            .split('0x')[1])),
+        Uint8List.fromList(hex.decode(jsonDecoded['message']
+            .toString()
+            .split(', ')[1]
+            .split('0x')[1]
+            .toString()))); // Initialize account
+
+    return account; // Return account
   }
 }

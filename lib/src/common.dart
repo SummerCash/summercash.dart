@@ -60,7 +60,7 @@ class Common {
     }
 
     final stringEncoded =
-        jsonDecoded['message'].toString().replaceAll('\n', ''); // Remove \n
+        jsonDecoded['message'].toString().replaceFirst('\n', ''); // Remove \n
 
     return new Uint8List.fromList(
         stringEncoded.codeUnits); // Encode to byte array
@@ -81,7 +81,9 @@ class Common {
       throw new APIException(jsonDecoded['msg']); // Throw an API Exception
     }
 
-    return jsonDecoded['message'].toString().replaceAll('\n', ''); // Remove \n
+    return jsonDecoded['message']
+        .toString()
+        .replaceFirst('\n', ''); // Remove \n
   }
 
   /// Decode given hex-formatted byte array to standard byte array.
@@ -100,7 +102,7 @@ class Common {
     }
 
     final stringEncoded =
-        jsonDecoded['message'].toString().replaceAll('\n', ''); // Remove \n
+        jsonDecoded['message'].toString().replaceFirst('\n', ''); // Remove \n
 
     return new Uint8List.fromList(
         stringEncoded.codeUnits); // Encode to byte array
@@ -121,7 +123,7 @@ class Common {
     }
 
     final stringEncoded =
-        jsonDecoded['message'].toString().replaceAll('\n', ''); // Remove \n
+        jsonDecoded['message'].toString().replaceFirst('\n', ''); // Remove \n
 
     return new Uint8List.fromList(
         stringEncoded.codeUnits); // Encode to byte array
