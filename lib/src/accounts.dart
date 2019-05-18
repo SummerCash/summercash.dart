@@ -19,7 +19,7 @@ class Accounts {
   /// API gateway HTTP client.
   IOClient _client;
 
-  /// Initialize an instance of the common API.
+  /// Initialize an instance of the accounts API.
   Accounts(String endpoint) {
     var wrapped = new HttpClient(); // Initialize HTTP client
     wrapped.badCertificateCallback =
@@ -36,10 +36,10 @@ class Accounts {
     _client.close(); // Close client
   }
 
-  /// Get base API endpoint.
+  /// Base API endpoint.
   String get baseEndpoint => _baseEndpoint;
 
-  /// Get API endpoint.
+  /// API endpoint.
   String get endpoint => _endpoint;
 
   /// Get method endpoint.

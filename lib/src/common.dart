@@ -32,10 +32,10 @@ class Common {
     _client.close(); // Close client
   }
 
-  /// Get base API endpoint.
+  /// Base API endpoint.
   String get baseEndpoint => _baseEndpoint;
 
-  /// Get API endpoint.
+  /// API endpoint.
   String get endpoint => _endpoint;
 
   /// Get method endpoint.

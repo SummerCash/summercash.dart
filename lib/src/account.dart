@@ -15,10 +15,10 @@ class Account {
     this._privateKey = privateKey; // Set private key
   }
 
-  /// Get address.
+  /// Address.
   Uint8List get address => _address;
 
-  /// Get private key.
+  /// Private key.
   Uint8List get privateKey => _privateKey;
 
   /// Get address hex value.
