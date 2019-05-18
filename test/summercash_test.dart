@@ -1,9 +1,9 @@
 import 'dart:typed_data';
 
-import 'package:summercash/src/chain.dart';
+import 'package:summercash/src/chain_api.dart';
 import 'package:test/test.dart';
-import 'package:summercash/src/common.dart';
-import 'package:summercash/src/accounts.dart';
+import 'package:summercash/src/common_api.dart';
+import 'package:summercash/src/accounts_api.dart';
 
 void main() {
   group('common tests', () {
