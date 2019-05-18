@@ -96,7 +96,6 @@ class Accounts {
 
     if (response.body.contains('"code":"internal"')) {
       // Check for errors
-      print(jsonDecoded['msg']);
       throw new APIException(jsonDecoded['msg']); // Throw an API Exception
     }
 
@@ -197,9 +196,9 @@ class Accounts {
 
     for (String address in addresses) {
       // Iterate through addresses
-      print(address);
-      accounts.add(await readAccountFromMemory(Uint8List.fromList(hex.decode(
-          address.split('0x')[1])))); // Append account to list of accounts
+      accounts.add(new Account(
+          Uint8List.fromList(hex.decode(address.split('0x')[1])),
+          null)); // Append account to list of accounts
     }
 
     return accounts; // Return accounts
