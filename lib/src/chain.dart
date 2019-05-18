@@ -1,5 +1,11 @@
+import 'dart:ffi';
+import 'dart:typed_data';
 import 'package:http/io_client.dart';
 import 'dart:io';
+import 'dart:convert';
+import 'package:summercash/src/api_exception.dart';
+import 'package:convert/convert.dart';
+import 'dart:core';
 
 /// API abstractions for the chain package.
 class Chain {
@@ -39,5 +45,29 @@ class Chain {
   String methodEndpoint(String method) {
     return _endpoint +
         '/${method[0].toUpperCase()}${method.substring(1)}'; // Return method endpoint
+  }
+
+  /// Calculate account chain balance.
+  Future<double> getBalance(Uint8List address) async {
+    final response = await _client.post(methodEndpoint('GetBalance'),
+        body: json.encode({'address': '0x' + hex.encode(address)}),
+        headers: {
+          'Content-Type': 'application/json'
+        }); // Make post request, get response
+
+    final jsonDecoded =
+        json.decode(response.body.replaceFirst('\n', '')); // Decode JSON
+
+    if (response.body.contains('"code":"internal"')) {
+      // Check for errors
+      throw new APIException(jsonDecoded['msg']); // Throw an API Exception
+    }
+
+    final parsed = double.parse(jsonDecoded['message']
+        .toString()
+        .replaceAll('\n', '')
+        .split('balance: ')[1]); // Parse balance
+
+    return parsed; // Return balance
   }
 }

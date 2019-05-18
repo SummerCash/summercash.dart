@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:summercash/src/chain.dart';
 import 'package:test/test.dart';
 import 'package:summercash/src/common.dart';
 import 'package:summercash/src/accounts.dart';
@@ -96,6 +97,24 @@ void main() {
       expect(account.string(),
           equals(readAccount.string())); // Ensure accounts are equivalent
 
+      accounts.destroy(); // Destroy accounts
+    });
+  });
+
+  group('chain tests', () {
+    Chain chain = new Chain('https://localhost:8080'); // Initialize chain API
+    Accounts accounts =
+        new Accounts('https://localhost:8080'); // Initialize accounts API
+
+    test('should calculate the balance of a given chain', () async {
+      final account = await accounts.newAccount(); // Initialize new account
+
+      final balance =
+          await chain.getBalance(account.address); // Calculate balance
+
+      expect(balance.toInt(), equals(0)); // Ensure has zero balance
+
+      chain.destroy(); // Destroy chain
       accounts.destroy(); // Destroy accounts
     });
   });
