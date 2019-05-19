@@ -47,4 +47,9 @@ class Chain {
 
   /// Chain ID.
   Uint8List get id => _id;
+
+  /// Number of transactions in chain.
+  int get numTransactions => _transactions.length;
+
+  dynamic queryTransaction()
 }
