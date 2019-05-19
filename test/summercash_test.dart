@@ -4,11 +4,12 @@ import 'package:summercash/src/chain_api.dart';
 import 'package:test/test.dart';
 import 'package:summercash/src/common_api.dart';
 import 'package:summercash/src/accounts_api.dart';
+import 'package:summercash/src/chain.dart';
 
 void main() {
   group('common tests', () {
-    Common common =
-        new Common('https://localhost:8080'); // Initialize common API
+    CommonAPI common =
+        new CommonAPI('https://localhost:8080'); // Initialize common API
 
     test('encoded test value should match runtime value', () async {
       expect(
@@ -41,8 +42,8 @@ void main() {
   });
 
   group('account tests', () {
-    Accounts accounts =
-        new Accounts('https://localhost:8080'); // Initialize accounts API
+    AccountsAPI accounts =
+        new AccountsAPI('https://localhost:8080'); // Initialize accounts API
 
     test('should create a new account', () async {
       await accounts.newAccount(); // Test encode functionality
@@ -102,9 +103,10 @@ void main() {
   });
 
   group('chain tests', () {
-    Chain chain = new Chain('https://localhost:8080'); // Initialize chain API
-    Accounts accounts =
-        new Accounts('https://localhost:8080'); // Initialize accounts API
+    ChainAPI chain =
+        new ChainAPI('https://localhost:8080'); // Initialize chain API
+    AccountsAPI accounts =
+        new AccountsAPI('https://localhost:8080'); // Initialize accounts API
 
     test('should calculate the balance of a given chain', () async {
       final account = await accounts.newAccount(); // Initialize new account
@@ -113,6 +115,16 @@ void main() {
           await chain.getBalance(account.address); // Calculate balance
 
       expect(balance.toInt(), equals(0)); // Ensure has zero balance
+    });
+
+    test('should read a given chain', () async {
+      final account = await accounts.newAccount(); // Initialize new account
+
+      Chain accountChain =
+          await chain.readChainFromMemory(account.address); // Read chain
+
+      expect(accountChain.account,
+          equals(account.address)); // Ensure addresses equivalent
 
       chain.destroy(); // Destroy chain
       accounts.destroy(); // Destroy accounts

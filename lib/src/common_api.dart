@@ -5,7 +5,7 @@ import 'dart:io';
 import 'dart:convert';
 
 /// API abstractions for the common package.
-class Common {
+class CommonAPI {
   /// Base node http API endpoint (does not include package in path).
   String _baseEndpoint;
 
@@ -16,7 +16,7 @@ class Common {
   IOClient _client;
 
   /// Initialize an instance of the common API.
-  Common(String endpoint) {
+  CommonAPI(String endpoint) {
     var wrapped = new HttpClient(); // Initialize HTTP client
     wrapped.badCertificateCallback =
         (X509Certificate cert, String host, int port) =>

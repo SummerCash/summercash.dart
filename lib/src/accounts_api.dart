@@ -9,7 +9,7 @@ import 'package:convert/convert.dart';
 import 'package:summercash/summercash.dart';
 
 /// API abstractions for the accoqnts package.
-class Accounts {
+class AccountsAPI {
   /// Base node http API endpoint (does not include package in path).
   String _baseEndpoint;
 
@@ -20,7 +20,7 @@ class Accounts {
   IOClient _client;
 
   /// Initialize an instance of the accounts API.
-  Accounts(String endpoint) {
+  AccountsAPI(String endpoint) {
     var wrapped = new HttpClient(); // Initialize HTTP client
     wrapped.badCertificateCallback =
         (X509Certificate cert, String host, int port) =>
