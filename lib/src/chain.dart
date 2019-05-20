@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:convert/convert.dart';
 
 /// A chain on the SummerCash network.
 class Chain {
@@ -51,5 +52,17 @@ class Chain {
   /// Number of transactions in chain.
   int get numTransactions => _transactions.length;
 
-  dynamic queryTransaction()
+  /// Search the working chain for a given hash.
+  dynamic queryTransaction(Uint8List hash) {
+    for (dynamic transaction in _transactions) {
+      // Iterate through transactions
+      if (hex.encode(new List<int>.from(transaction['hash'])) ==
+          hex.encode(hash)) {
+        // Check matching hash
+        return transaction; // Return tx
+      }
+    }
+
+    return null; // No tx found
+  }
 }

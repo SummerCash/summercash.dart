@@ -5,6 +5,7 @@ import 'package:test/test.dart';
 import 'package:summercash/src/common_api.dart';
 import 'package:summercash/src/accounts_api.dart';
 import 'package:summercash/src/chain.dart';
+import 'package:convert/convert.dart';
 
 void main() {
   group('common tests', () {
@@ -125,6 +126,34 @@ void main() {
 
       expect(accountChain.account,
           equals(account.address)); // Ensure addresses equivalent
+    });
+
+    test('should find a given transaction by the provided hash', () async {
+      final address = Uint8List.fromList([
+        4,
+        0,
+        40,
+        213,
+        54,
+        213,
+        53,
+        30,
+        131,
+        251,
+        190,
+        195,
+        32,
+        193,
+        148,
+        98,
+        154,
+        206
+      ]); // Initialize address
+
+      Chain accountChain =
+          await chain.readChainFromMemory(address); // Read chain
+
+      await accountChain.queryTransaction(Uint8List.fromList("0x".codeUnits));
 
       chain.destroy(); // Destroy chain
       accounts.destroy(); // Destroy accounts
