@@ -6,6 +6,7 @@ import 'package:test/test.dart';
 import 'package:summercash/src/common_api.dart';
 import 'package:summercash/src/accounts_api.dart';
 import 'package:summercash/src/chain.dart';
+import 'package:summercash/src/crypto_api.dart';
 
 void main() {
   group('common tests', () {
@@ -218,6 +219,65 @@ void main() {
           equals(BigInt.from(500000000000000))); // Ensure properly parsed
 
       chainConfig.destroy(); // Destroy cfg
+    });
+  });
+
+  group('crypto tests', () {
+    CryptoAPI crypto =
+        new CryptoAPI('https://localhost:8080'); // Initialize crypto API.
+
+    test('should hash a given input via sha3', () async {
+      final hashed =
+          await crypto.sha3(Uint8List.fromList("test".codeUnits)); // Hash
+
+      expect(
+          hashed,
+          equals(Uint8List.fromList([
+            167,
+            255,
+            198,
+            248,
+            191,
+            30,
+            215,
+            102,
+            81,
+            193,
+            71,
+            86,
+            160,
+            97,
+            214,
+            98,
+            245,
+            128,
+            255,
+            77,
+            228,
+            59,
+            73,
+            250,
+            130,
+            216,
+            10,
+            75,
+            128,
+            248,
+            67,
+            74
+          ]))); // Ensure expected hash
+    });
+
+    test('should has a given byte array via sha3 to a string', () async {
+      final hashed =
+          await crypto.sha3String(Uint8List.fromList("test".codeUnits)); // Hash
+
+      expect(
+          hashed,
+          equals(
+              'a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a')); // Ensure is expected hash
+
+      crypto.destroy(); // Destroy crypto
     });
   });
 }

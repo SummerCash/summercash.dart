@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'dart:io';
 import 'package:http/io_client.dart';
 import 'package:summercash/src/chain_config.dart';
