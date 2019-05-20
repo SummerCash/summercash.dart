@@ -208,6 +208,14 @@ void main() {
           .newChainConfig('examples/genesis.json'); // Parse genesis JSON file
 
       expect(config.networkID, equals(666)); // Ensure properly parsed
+    });
+
+    test('should get the total supply of the working network', () async {
+      final supply = await chainConfig
+          .getTotalSupply('examples/genesis.json'); // Get total supply
+
+      expect(supply,
+          equals(BigInt.from(500000000000000))); // Ensure properly parsed
 
       chainConfig.destroy(); // Destroy cfg
     });

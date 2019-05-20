@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 import 'package:http/io_client.dart';
 import 'package:summercash/src/chain_config.dart';
@@ -74,5 +75,27 @@ class ChainConfigAPI {
         alloc,
         double.parse(jsonChainConfig['inflation'].toString()),
         jsonChainConfig['network']); // Return initialize chain config
+  }
+
+  /// Get total network supply.
+  Future<BigInt> getTotalSupply(String genesisPath) async {
+    final response = await _client.post(methodEndpoint('GetTotalSupply'),
+        body: json.encode({'genesisPath': genesisPath}),
+        headers: {
+          'Content-Type': 'application/json'
+        }); // Make post request, get response
+
+    final jsonDecoded =
+        json.decode(response.body.replaceFirst('\n', '')); // Decode JSON
+
+    if (response.body.contains('"code":"internal"')) {
+      // Check for errors
+      throw new APIException(jsonDecoded['msg']); // Throw an API Exception
+    }
+
+    final stringAmount =
+        jsonDecoded['message'].toString().replaceAll('\n', ''); // Remove \n
+
+    return BigInt.parse(stringAmount.split(".")[0]); // Parse amount
   }
 }
