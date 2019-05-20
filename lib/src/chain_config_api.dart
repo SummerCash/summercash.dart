@@ -73,6 +73,6 @@ class ChainConfigAPI {
     return new ChainConfig(
         alloc,
         double.parse(jsonChainConfig['inflation'].toString()),
-        jsonChainConfig['networkID']); // Return initialize chain config
+        jsonChainConfig['network']); // Return initialize chain config
   }
 }
