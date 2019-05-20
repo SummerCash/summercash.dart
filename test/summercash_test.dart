@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:summercash/src/chain_api.dart';
+import 'package:summercash/summercash.dart';
 import 'package:test/test.dart';
 import 'package:summercash/src/common_api.dart';
 import 'package:summercash/src/accounts_api.dart';
@@ -194,6 +195,21 @@ void main() {
 
       chain.destroy(); // Destroy chain
       accounts.destroy(); // Destroy accounts
+    });
+  });
+
+  group('chain config tests', () {
+    ChainConfigAPI chainConfig = new ChainConfigAPI(
+        'https://localhost:8080'); // Initialize chain config API.
+
+    test('should create a new chain config from a provided genesis file',
+        () async {
+      final config = await chainConfig
+          .newChainConfig('examples/genesis.json'); // Parse genesis JSON file
+
+      expect(config.networkID, equals(666)); // Ensure properly parsed
+
+      chainConfig.destroy(); // Destroy cfg
     });
   });
 }

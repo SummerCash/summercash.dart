@@ -1,5 +1,8 @@
 import 'dart:io';
 import 'package:http/io_client.dart';
+import 'package:summercash/src/chain_config.dart';
+import 'dart:convert';
+import 'package:summercash/src/api_exception.dart';
 
 /// API abstractions for the chain config package.
 class ChainConfigAPI {
@@ -21,7 +24,7 @@ class ChainConfigAPI {
 
     this._client = new IOClient(wrapped); // Set HTTP client
     this._baseEndpoint = endpoint; // Set base endpoint
-    this._endpoint = endpoint + '/twirp/common.Common'; // Set endpoint
+    this._endpoint = endpoint + '/twirp/config.Config'; // Set endpoint
   }
 
   /// Destroy chain config API client.
@@ -39,5 +42,37 @@ class ChainConfigAPI {
   String methodEndpoint(String method) {
     return _endpoint +
         '/${method[0].toUpperCase()}${method.substring(1)}'; // Return method endpoint
+  }
+
+  /// Initialize a new chain config from a given genesis file.
+  Future<ChainConfig> newChainConfig(String genesisPath) async {
+    final response = await _client.post(methodEndpoint('NewChainConfig'),
+        body: json.encode({'genesisPath': genesisPath}),
+        headers: {
+          'Content-Type': 'application/json'
+        }); // Make post request, get response
+
+    final jsonDecoded =
+        json.decode(response.body.replaceFirst('\n', '')); // Decode JSON
+
+    if (response.body.contains('"code":"internal"')) {
+      // Check for errors
+      throw new APIException(jsonDecoded['msg']); // Throw an API Exception
+    }
+
+    final jsonChainConfig =
+        json.decode(jsonDecoded['message']); // Decode message body
+
+    var alloc = new Map<String, double>(); // Initialize alloc
+
+    new Map<String, dynamic>.from(
+            new Map<String, dynamic>.from(jsonChainConfig['alloc']))
+        .forEach((element, value) =>
+            alloc[element] = double.parse(value)); // Parse alloc
+
+    return new ChainConfig(
+        alloc,
+        double.parse(jsonChainConfig['inflation'].toString()),
+        jsonChainConfig['networkID']); // Return initialize chain config
   }
 }
