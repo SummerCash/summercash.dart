@@ -5,7 +5,6 @@ import 'package:test/test.dart';
 import 'package:summercash/src/common_api.dart';
 import 'package:summercash/src/accounts_api.dart';
 import 'package:summercash/src/chain.dart';
-import 'package:convert/convert.dart';
 
 void main() {
   group('common tests', () {
@@ -153,7 +152,45 @@ void main() {
       Chain accountChain =
           await chain.readChainFromMemory(address); // Read chain
 
-      await accountChain.queryTransaction(Uint8List.fromList("0x".codeUnits));
+      dynamic tx = await accountChain.queryTransaction(Uint8List.fromList([
+        48,
+        120,
+        24,
+        148,
+        186,
+        101,
+        250,
+        245,
+        92,
+        130,
+        78,
+        199,
+        121,
+        61,
+        158,
+        62,
+        18,
+        224,
+        194,
+        23,
+        164,
+        10,
+        246,
+        45,
+        164,
+        96,
+        248,
+        198,
+        126,
+        238,
+        67,
+        125
+      ])); // Query tx
+
+      if (tx == null) {
+        // Check for errors
+        expect(1, equals(2)); // Force panic
+      }
 
       chain.destroy(); // Destroy chain
       accounts.destroy(); // Destroy accounts
