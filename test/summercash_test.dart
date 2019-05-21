@@ -296,5 +296,40 @@ void main() {
       await transactions.newTransaction(0, sender.address, recipient.address,
           0.0, Uint8List.fromList('test'.codeUnits)); // Initialize transaction
     });
+
+    test('should sign a transaction', () async {
+      final sender = await accounts.newAccount(); // Initialize new account
+
+      final recipient = await accounts.newAccount(); // Initialize new account
+
+      final txHash = await transactions.newTransaction(
+          0,
+          sender.address,
+          recipient.address,
+          0.0,
+          Uint8List.fromList('test'.codeUnits)); // Initialize transaction
+
+      await transactions.signTransaction(txHash); // Sign transaction
+    });
+
+    test('should publish a transaction', () async {
+      final sender = await accounts.newAccount(); // Initialize new account
+
+      final recipient = await accounts.newAccount(); // Initialize new account
+
+      final txHash = await transactions.newTransaction(
+          0,
+          sender.address,
+          recipient.address,
+          0.0,
+          Uint8List.fromList('test'.codeUnits)); // Initialize transaction
+
+      await transactions.signTransaction(txHash); // Sign transaction
+
+      await transactions.publishTransaction(txHash); // Publish transaction
+
+      accounts.destroy(); // Destroy accounts
+      transactions.destroy(); // Destroy transactions
+    });
   });
 }
