@@ -73,4 +73,67 @@ class TransactionsAPI {
         .replaceFirst('\n', '')
         .split('0x')[1]); // Return tx
   }
+
+  /// Publish a given transaction.
+  Future publishTransaction(Uint8List transactionHash) async {
+    final response = await _client.post(methodEndpoint('Publish'),
+        body: json.encode({
+          'address': '0x' + hex.encode(transactionHash),
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }); // Make post request, get response
+
+    final jsonDecoded = json.decode(response.body); // Decode JSON
+
+    if (response.body.contains('"code":"internal"')) {
+      // Check for errors
+      throw new APIException(jsonDecoded['msg']); // Throw an API Exception
+    }
+  }
+
+  /// Sign a transaction corresponding to the given transaction has via ECDSA.
+  Future signTransaction(Uint8List transactionHash) async {
+    final response = await _client.post(methodEndpoint('SignTransaction'),
+        body: json.encode({
+          'address': '0x' + hex.encode(transactionHash),
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }); // Make post request, get response
+
+    final jsonDecoded = json.decode(response.body); // Decode JSON
+
+    if (response.body.contains('"code":"internal"')) {
+      // Check for errors
+      throw new APIException(jsonDecoded['msg']); // Throw an API Exception
+    }
+  }
+
+  /// Verify the contents of a given transaction's ECDSA hash.
+  Future<bool> verifyTransactionSignature(Uint8List transactionHash) async {
+    final response = await _client.post(
+        methodEndpoint('VerifyTransactionSignature'),
+        body: json.encode({
+          'address': '0x' + hex.encode(transactionHash),
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }); // Make post request, get response
+
+    final jsonDecoded = json.decode(response.body); // Decode JSON
+
+    if (response.body.contains('"code":"internal"')) {
+      // Check for errors
+      throw new APIException(jsonDecoded['msg']); // Throw an API Exception
+    }
+
+    switch (jsonDecoded['message'].toString().replaceAll('\n', '')) {
+      // Handle values
+      case "true":
+        return true; // Valid
+      default:
+        return false; // Invalid
+    }
+  }
 }
