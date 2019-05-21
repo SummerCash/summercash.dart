@@ -1,5 +1,4 @@
 import 'package:summercash/src/api_exception.dart';
-import 'dart:ffi';
 import 'dart:typed_data';
 import 'dart:convert';
 import 'package:http/io_client.dart';
@@ -18,7 +17,7 @@ class TransactionsAPI {
   IOClient _client;
 
   /// Initialize a new TransactionAPI instance.
-  TransactionAPI(String endpoint) {
+  TransactionsAPI(String endpoint) {
     var wrapped = new HttpClient(); // Initialize HTTP client
     wrapped.badCertificateCallback =
         (X509Certificate cert, String host, int port) =>
@@ -48,7 +47,7 @@ class TransactionsAPI {
   }
 
   /// Initialize a new transaction with the given nonce, sender, recipient, amount, and payload.
-  Future<dynamic> newTransaction(Uint32 nonce, Uint8List sender,
+  Future<Uint8List> newTransaction(int nonce, Uint8List sender,
       Uint8List recipient, double amount, Uint8List payload) async {
     final response = await _client.post(methodEndpoint('NewTransaction'),
         body: json.encode({
@@ -69,7 +68,9 @@ class TransactionsAPI {
       throw new APIException(jsonDecoded['msg']); // Throw an API Exception
     }
 
-    return json.decode(
-        jsonDecoded['message'].toString().replaceFirst('\n', '')); // Return tx
+    return hex.decode(jsonDecoded['message']
+        .toString()
+        .replaceFirst('\n', '')
+        .split('0x')[1]); // Return tx
   }
 }

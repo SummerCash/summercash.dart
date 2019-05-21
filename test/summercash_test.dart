@@ -293,14 +293,8 @@ void main() {
 
       final recipient = await accounts.newAccount(); // Initialize new account
 
-      final transaction = await transactions.newTransaction(
-          0,
-          sender.address,
-          recipient.address,
-          0.0,
-          Uint8List.fromList('test'.codeUnits)); // Initialize transaction
-
-      print(transaction);
+      await transactions.newTransaction(0, sender.address, recipient.address,
+          0.0, Uint8List.fromList('test'.codeUnits)); // Initialize transaction
     });
   });
 }
