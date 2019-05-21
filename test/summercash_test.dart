@@ -1,6 +1,6 @@
 import 'dart:typed_data';
-
 import 'package:summercash/src/chain_api.dart';
+import 'package:summercash/src/transactions_api.dart';
 import 'package:summercash/summercash.dart';
 import 'package:test/test.dart';
 import 'package:summercash/src/common_api.dart';
@@ -278,6 +278,29 @@ void main() {
               'a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a')); // Ensure is expected hash
 
       crypto.destroy(); // Destroy crypto
+    });
+  });
+
+  group('transaction tests', () {
+    AccountsAPI accounts =
+        new AccountsAPI('https://localhost:8080'); // Initialize accounts API
+
+    TransactionsAPI transactions =
+        new TransactionsAPI('https://localhost:8080'); // Initialize tx API
+
+    test('should create a new transaction', () async {
+      final sender = await accounts.newAccount(); // Initialize new account
+
+      final recipient = await accounts.newAccount(); // Initialize new account
+
+      final transaction = await transactions.newTransaction(
+          0,
+          sender.address,
+          recipient.address,
+          0.0,
+          Uint8List.fromList('test'.codeUnits)); // Initialize transaction
+
+      print(transaction);
     });
   });
 }
