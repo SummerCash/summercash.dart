@@ -215,8 +215,10 @@ void main() {
       final supply = await chainConfig
           .getTotalSupply('examples/genesis.json'); // Get total supply
 
-      expect(supply,
-          equals(BigInt.from(500000000000000))); // Ensure properly parsed
+      expect(
+          supply,
+          equals(BigInt.parse(
+              '999999999999999926539781176481198923508803215199467887262646419780362305536'))); // Ensure properly parsed
 
       chainConfig.destroy(); // Destroy cfg
     });

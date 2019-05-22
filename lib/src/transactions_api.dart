@@ -79,6 +79,7 @@ class TransactionsAPI {
     final response = await _client.post(methodEndpoint('Publish'),
         body: json.encode({
           'address': '0x' + hex.encode(transactionHash),
+          'address2': 'main_net'
         }),
         headers: {
           'Content-Type': 'application/json'
