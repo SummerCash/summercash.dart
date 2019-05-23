@@ -44,8 +44,8 @@ class P2PAPI {
   }
 
   /// Request the number of connected peers from a local node.
-  Future<int> connectedPeers() async {
-    final response = await _client.post(methodEndpoint('ConnectedPeers'),
+  Future<int> numConnectedPeers() async {
+    final response = await _client.post(methodEndpoint('NumConnectedPeers'),
         body: json.encode({}),
         headers: {
           'Content-Type': 'application/json'
@@ -60,6 +60,27 @@ class P2PAPI {
 
     return int.parse(
         jsonDecoded['message'].toString().replaceAll('\n', '')); // Return num
+  }
+
+  /// Request a list of peers connected to the local node.
+  Future<List<String>> connectedPeers() async {
+    final response = await _client.post(methodEndpoint('ConnectedPeers'),
+        body: json.encode({}),
+        headers: {
+          'Content-Type': 'application/json'
+        }); // Make post request, get response
+
+    final jsonDecoded = json.decode(response.body); // Decode JSON
+
+    if (response.body.contains('"code":"internal"')) {
+      // Check for errors
+      throw new APIException(jsonDecoded['msg']); // Throw an API Exception
+    }
+
+    return List<String>.from(jsonDecoded['message']
+        .toString()
+        .replaceFirst('\n', '')
+        .split(', ')); // Return peers
   }
 
   /// Sync the working network.

@@ -341,9 +341,17 @@ void main() {
 
     test('shold get the number of connected peers', () async {
       final numPeers =
-          await p2p.connectedPeers(); // Get number of connected peers
+          await p2p.numConnectedPeers(); // Get number of connected peers
 
       expect(numPeers, greaterThan(0)); // Ensure is connected
+    });
+
+    test('should get a list of connected peers', () async {
+      final peers = await p2p.connectedPeers(); // Get number of connected peers
+
+      expect(peers.length, greaterThan(0)); // Ensure has peers
+
+      p2p.destroy(); // Destroy p2p API
     });
   });
 }
