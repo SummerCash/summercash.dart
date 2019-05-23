@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:summercash/src/chain_api.dart';
+import 'package:summercash/src/p2p_api.dart';
 import 'package:summercash/src/transactions_api.dart';
 import 'package:summercash/summercash.dart';
 import 'package:test/test.dart';
@@ -332,6 +333,17 @@ void main() {
 
       accounts.destroy(); // Destroy accounts
       transactions.destroy(); // Destroy transactions
+    });
+  });
+
+  group('p2p tests', () {
+    P2PAPI p2p = new P2PAPI('https://localhost:8080'); // Initialize p2p API
+
+    test('shold get the number of connected peers', () async {
+      final numPeers =
+          await p2p.connectedPeers(); // Get number of connected peers
+
+      expect(numPeers, greaterThan(0)); // Ensure is connected
     });
   });
 }
